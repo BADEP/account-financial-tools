@@ -57,12 +57,15 @@ class AccountLoan(models.TransientModel):
                 lambda r: r.date > self.date and r.move_ids
             ):
                 raise UserError(_("Some future invoices already exists"))
-        if self.loan_id.line_ids.filtered(
-            lambda r: r.date < self.date and not r.move_ids
-        ):
-            raise UserError(_("Some moves are not created"))
-        if self.loan_id.line_ids.filtered(lambda r: r.date > self.date and r.move_ids):
-            raise UserError(_("Some future moves already exists"))
+        else:
+            if self.loan_id.line_ids.filtered(
+                lambda r: r.date < self.date and not r.move_ids
+            ):
+                raise UserError(_("Some moves are not created"))
+            if self.loan_id.line_ids.filtered(
+                lambda r: r.date > self.date and r.move_ids
+            ):
+                raise UserError(_("Some future moves already exists"))
         lines = self.loan_id.line_ids.filtered(lambda r: r.date > self.date).sorted(
             "sequence", reverse=True
         )
