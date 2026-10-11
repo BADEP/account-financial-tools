@@ -31,7 +31,7 @@ class AccountMoveTemplateRun(models.TransientModel):
         domain=["|", ("parent_id", "=", False), ("is_company", "=", True)],
     )
     date = fields.Date(required=True, default=fields.Date.context_today)
-    journal_id = fields.Many2one("account.journal", string="Journal", readonly=True)
+    journal_id = fields.Many2one("account.journal", readonly=True)
     ref = fields.Char(string="Reference")
     line_ids = fields.One2many(
         "account.move.template.line.run", "wizard_id", string="Lines"
@@ -50,7 +50,7 @@ Valid dictionary to overwrite template lines:
     )
 
     def _prepare_wizard_line(self, tmpl_line):
-        vals = {
+        return {
             "wizard_id": self.id,
             "sequence": tmpl_line.sequence,
             "name": tmpl_line.name,
@@ -66,7 +66,6 @@ Valid dictionary to overwrite template lines:
             "is_refund": tmpl_line.is_refund,
             "tax_repartition_line_id": tmpl_line.tax_repartition_line_id.id or False,
         }
-        return vals
 
     # STEP 1
     def load_lines(self):
@@ -95,7 +94,7 @@ Valid dictionary to overwrite template lines:
         # Overwrite self.line_ids to show overwrite values
         self._overwrite_line(overwrite_vals)
         # Pass context furtner to generate_move function, only readonly field
-        for key in overwrite_vals.keys():
+        for key in overwrite_vals:
             overwrite_vals[key].pop("amount", None)
         result["context"] = dict(result.get("context", {}), overwrite=overwrite_vals)
         return result
@@ -133,8 +132,8 @@ Valid dictionary to overwrite template lines:
                 raise ValidationError(
                     self.env._("Valid fields to overwrite are %s", valid_keys)
                 )
-        except ValidationError as e:
-            raise e
+        except ValidationError:
+            raise
         except Exception as e:
             msg = """
     valid_dict = {
@@ -154,9 +153,7 @@ Valid dictionary to overwrite template lines:
     def _safe_vals(self, model, vals):
         obj = self.env[model]
         copy_vals = vals.copy()
-        invalid_keys = list(
-            set(list(vals.keys())) - set(list(dict(obj._fields).keys()))
-        )
+        invalid_keys = list(set(vals.keys()) - set(dict(obj._fields).keys()))
         for key in invalid_keys:
             copy_vals.pop(key)
         return copy_vals
@@ -176,7 +173,7 @@ Valid dictionary to overwrite template lines:
             sequence2amount[wizard_line.sequence] = wizard_line.amount
         company_cur = self.company_id.currency_id
         self.template_id.compute_lines(sequence2amount)
-        if all([company_cur.is_zero(x) for x in sequence2amount.values()]):
+        if all(company_cur.is_zero(x) for x in sequence2amount.values()):
             raise UserError(self.env._("Debit and credit of all lines are null."))
         move_vals = self._prepare_move()
         for line in self.template_id.line_ids:
@@ -210,14 +207,13 @@ Valid dictionary to overwrite template lines:
         return result
 
     def _prepare_move(self):
-        move_vals = {
+        return {
             "ref": self.ref,
             "journal_id": self.journal_id.id,
             "date": self.date,
             "company_id": self.company_id.id,
             "line_ids": [],
         }
-        return move_vals
 
     def _prepare_move_line(self, line, amount):
         date_maturity = False
@@ -290,7 +286,7 @@ class AccountMoveTemplateLineRun(models.TransientModel):
     tax_line_id = fields.Many2one(
         "account.tax", string="Originator Tax", ondelete="restrict", readonly=True
     )
-    partner_id = fields.Many2one("res.partner", readonly=True, string="Partner")
+    partner_id = fields.Many2one("res.partner", readonly=True)
     payment_term_id = fields.Many2one(
         "account.payment.term", string="Payment Terms", readonly=True
     )
@@ -305,6 +301,5 @@ class AccountMoveTemplateLineRun(models.TransientModel):
     is_refund = fields.Boolean(string="Is a refund?", readonly=True)
     tax_repartition_line_id = fields.Many2one(
         "account.tax.repartition.line",
-        string="Tax Repartition Line",
         readonly=True,
     )

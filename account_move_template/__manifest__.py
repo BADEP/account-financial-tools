@@ -5,7 +5,7 @@
 
 {
     "name": "Account Move Template",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Accounting/Accounting",
     "summary": "Templates for recurring Journal Entries",
     "author": "Agile Business Group, Aurium Technologies, Vauxoo, ForgeFlow, "
@@ -14,10 +14,9 @@
     "license": "AGPL-3",
     "depends": ["account"],
     "data": [
-        "security/account_move_template_security.xml",
-        "security/ir.model.access.csv",
         "wizard/account_move_template_run_view.xml",
         "view/account_move_template.xml",
+        "security/ir.access.csv",
     ],
     "installable": True,
 }
