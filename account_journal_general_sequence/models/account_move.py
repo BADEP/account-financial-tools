@@ -1,6 +1,7 @@
 # Copyright 2022 Moduon
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 import logging
+import typing
 
 from odoo import api, fields, models
 
@@ -12,7 +13,7 @@ ADDON = "account_journal_general_sequence"
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    _local_constraints = [
+    _local_constraints: typing.ClassVar[list] = [
         models.Constraint(
             "UNIQUE (entry_number, journal_id)",
             "Entry number must be unique per journal.",
