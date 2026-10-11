@@ -21,13 +21,13 @@ Asset Force Account
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Faccount--financial--tools-lightgray.png?logo=github
-    :target: https://github.com/OCA/account-financial-tools/tree/19.0/account_asset_force_account
+    :target: https://github.com/OCA/account-financial-tools/tree/20.0/account_asset_force_account
     :alt: OCA/account-financial-tools
 .. |badge4| image:: https://img.shields.io/badge/weblate-Translate%20me-F47D42.png
-    :target: https://translation.odoo-community.org/projects/account-financial-tools-19-0/account-financial-tools-19-0-account_asset_force_account
+    :target: https://translation.odoo-community.org/projects/account-financial-tools-20-0/account-financial-tools-20-0-account_asset_force_account
     :alt: Translate me on Weblate
 .. |badge5| image:: https://img.shields.io/badge/runboat-Try%20me-875A7B.png
-    :target: https://runboat.odoo-community.org/builds?repo=OCA/account-financial-tools&target_branch=19.0
+    :target: https://runboat.odoo-community.org/builds?repo=OCA/account-financial-tools&target_branch=20.0
     :alt: Try me on Runboat
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
@@ -49,12 +49,12 @@ Usage
 
 2. **Create a Vendor Bill**:
 
-   - Go to **Vendors -> Bills** and create a new bill.
-   - Add a product and select the asset profile you just created.
-   - The Asset Account will be derived from the profile or can be
-     manually updated at this step (the invoice account will be used as
-     the Asset Account).
-   - Set the product price and confirm the bill.
+   -  Go to **Vendors -> Bills** and create a new bill.
+   -  Add a product and select the asset profile you just created.
+   -  The Asset Account will be derived from the profile or can be
+      manually updated at this step (the invoice account will be used as
+      the Asset Account).
+   -  Set the product price and confirm the bill.
 
 3. | **Asset Creation**:
    | Once the bill is confirmed, the asset will be created and populated
@@ -68,7 +68,7 @@ Bug Tracker
 Bugs are tracked on `GitHub Issues <https://github.com/OCA/account-financial-tools/issues>`_.
 In case of trouble, please check there if your issue has already been reported.
 If you spotted it first, help us to smash it by providing a detailed and welcomed
-`feedback <https://github.com/OCA/account-financial-tools/issues/new?body=module:%20account_asset_force_account%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
+`feedback <https://github.com/OCA/account-financial-tools/issues/new?body=module:%20account_asset_force_account%0Aversion:%2020.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**>`_.
 
 Do not contact contributors directly about support or help with technical issues.
 
@@ -83,13 +83,13 @@ Authors
 Contributors
 ------------
 
-- `APSL-Nagarro <https://apsl.tech>`__:
+-  `APSL-Nagarro <https://apsl.tech>`__:
 
-  - Bernat Obrador <bobrador@apsl.net>
+   -  Bernat Obrador <bobrador@apsl.net>
 
-- `Heliconia Solutions Pvt. Ltd. <https://www.heliconia.io>`__
+-  `Heliconia Solutions Pvt. Ltd. <https://www.heliconia.io>`__
 
-  - Bhavesh Heliconia
+   -  Bhavesh Heliconia
 
 Maintainers
 -----------
@@ -112,6 +112,6 @@ Current `maintainer <https://odoo-community.org/page/maintainer-role>`__:
 
 |maintainer-BernatObrador| 
 
-This module is part of the `OCA/account-financial-tools <https://github.com/OCA/account-financial-tools/tree/19.0/account_asset_force_account>`_ project on GitHub.
+This module is part of the `OCA/account-financial-tools <https://github.com/OCA/account-financial-tools/tree/20.0/account_asset_force_account>`_ project on GitHub.
 
 You are welcome to contribute. To learn how please visit https://odoo-community.org/page/Contribute.
