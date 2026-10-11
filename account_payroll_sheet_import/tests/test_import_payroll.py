@@ -1,8 +1,8 @@
-import base64
 import os
 
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
+from odoo.tools import BinaryBytes
 
 
 class TestPayrollImport(TransactionCase):
@@ -83,7 +83,7 @@ class TestPayrollImport(TransactionCase):
     def _load_file(self, filename):
         path = os.path.join(os.path.dirname(__file__), "files", filename)
         with open(path, "rb") as f:
-            return base64.b64encode(f.read())
+            return BinaryBytes(f.read())
 
     def test_import_with_valid_partner(self):
         file_data = self._load_file("test_payroll_1.xlsx")

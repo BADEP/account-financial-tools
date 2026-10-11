@@ -9,7 +9,7 @@ class PayrollImportMapping(models.Model):
     _description = "Payroll Import Mapping"
 
     name = fields.Char("Mapping Name", required=True)
-    journal_id = fields.Many2one("account.journal", string="Journal", required=True)
+    journal_id = fields.Many2one("account.journal", required=True)
     id_column = fields.Char(
         "ID Column",
         required=True,
@@ -22,7 +22,6 @@ class PayrollImportMapping(models.Model):
     )
     company_id = fields.Many2one(
         "res.company",
-        string="Company",
         default=lambda self: self.env.company,
         required=True,
     )
@@ -33,13 +32,12 @@ class PayrollImportMappingLine(models.Model):
     _description = "Mapping of Excel columns to accounting accounts"
 
     column_name = fields.Char("Excel Column Name", required=True)
-    account_id = fields.Many2one("account.account", string="Account", required=True)
+    account_id = fields.Many2one("account.account", required=True)
     move_type = fields.Selection(
         [("debit", ("Debit")), ("credit", ("Credit"))], required=True
     )
     company_id = fields.Many2one(
         "res.company",
-        string="Company",
         default=lambda self: self.env.company,
         required=True,
     )

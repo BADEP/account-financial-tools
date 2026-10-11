@@ -1,8 +1,6 @@
 # Copyright 2025 (APSL - Nagarro) Bernat Obrador
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import base64
-import io
 from collections import defaultdict
 
 import pandas as pd
@@ -164,8 +162,7 @@ class PayrollImportWizard(models.TransientModel):
         if not self.filename.endswith((".xlsx", ".xls")):
             raise ValidationError(self.env._("Only Excel files are supported."))
 
-        data = base64.b64decode(self.file)
-        df = df = pd.read_excel(io.BytesIO(data))
+        df = pd.read_excel(self.file.open())
 
         account_map = self.get_account_map()
         self.check_columns(df, account_map)
