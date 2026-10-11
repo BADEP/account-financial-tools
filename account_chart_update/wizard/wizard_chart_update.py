@@ -265,9 +265,11 @@ class WizardUpdateChartsAccounts(models.TransientModel):
         # Filter fields that are computed readonly
         obj = self.env[model]
         fields = fields.filtered(
-            lambda x, obj=obj: x.name not in obj._fields
-            or not obj._fields[x.name].compute
-            or not obj._fields[x.name].readonly
+            lambda x, obj=obj: (
+                x.name not in obj._fields
+                or not obj._fields[x.name].compute
+                or not obj._fields[x.name].readonly
+            )
         )
         return fields
 
@@ -448,7 +450,7 @@ class WizardUpdateChartsAccounts(models.TransientModel):
             "account.fiscal.position": self.update_fiscal_position,
         }
         langs = self.env["res.lang"].search([("active", "=", True)])
-        for m_name in model_mapping.keys():
+        for m_name in model_mapping:
             if not model_mapping[m_name]:
                 continue
             for _xmlid, r_data in t_data[m_name].items():
