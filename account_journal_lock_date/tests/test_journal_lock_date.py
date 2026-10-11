@@ -1,8 +1,9 @@
 # Copyright 2017 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from datetime import date, timedelta
+from datetime import timedelta
 
+from odoo import fields
 from odoo.exceptions import UserError
 from odoo.fields import Command
 from odoo.tests import tagged
@@ -24,7 +25,7 @@ class TestJournalLockDate(common.AccountTestInvoicingCommon):
         # create a move and post it
         cls.move = cls.account_move_obj.create(
             {
-                "date": date.today(),
+                "date": fields.Date.today(),
                 "journal_id": cls.journal.id,
                 "line_ids": [
                     Command.create(
@@ -46,7 +47,7 @@ class TestJournalLockDate(common.AccountTestInvoicingCommon):
         )
         cls.move.action_post()
         # lock journal, set 'Lock Date for Non-Advisers'
-        cls.journal.period_lock_date = date.today() + timedelta(days=2)
+        cls.journal.period_lock_date = fields.Date.today() + timedelta(days=2)
 
     def test_journal_lock_date(self):
         self.env.user.write(
@@ -137,8 +138,8 @@ class TestJournalLockDate(common.AccountTestInvoicingCommon):
             .with_context(active_model="account.journal", active_ids=self.journal.id)
             .create(
                 {
-                    "fiscalyear_lock_date": date.today() + timedelta(days=2),
-                    "period_lock_date": date.today() + timedelta(days=4),
+                    "fiscalyear_lock_date": fields.Date.today() + timedelta(days=2),
+                    "period_lock_date": fields.Date.today() + timedelta(days=4),
                 }
             )
         )
