@@ -3,11 +3,11 @@
 
 {
     "name": "Account Fiscal Position Allowed Journal",
-    "summary": """
-        Allow defining allowed journals on fiscal positions.
-        Related invoices can only use one of the allowed journals on the
-        fiscal position.""",
-    "version": "19.0.1.0.0",
+    "summary": (
+        "Allow defining allowed journals on fiscal positions. Related invoices "
+        "can only use one of the allowed journals on the fiscal position."
+    ),
+    "version": "20.0.1.0.0",
     "development_status": "Beta",
     "category": "Accounting/Accounting",
     "license": "AGPL-3",

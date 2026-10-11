@@ -47,8 +47,8 @@ class TestAccountFiscalPositionAllowedJournal(AccountTestInvoicingCommon):
         move_form.journal_id = cls.journal_01
         move_form.fiscal_position_id = cls.fiscal_position_01
         with move_form.invoice_line_ids.new() as line_form:
-            line_form.name = "Invoice line 01"
             line_form.product_id = cls.product_01
+            line_form.name = "Invoice line 01"
             line_form.price_unit = 1
             line_form.quantity = 1
         cls.invoice_01 = move_form.save()
@@ -120,8 +120,8 @@ class TestAccountFiscalPositionAllowedJournal(AccountTestInvoicingCommon):
         move_form.partner_id = self.partner_01
         move_form.fiscal_position_id = self.fiscal_position_01
         with move_form.invoice_line_ids.new() as line_form:
-            line_form.name = "Invoice line 01"
             line_form.product_id = self.product_01
+            line_form.name = "Invoice line 01"
             line_form.price_unit = 1
             line_form.quantity = 1
         invoice = move_form.save()
