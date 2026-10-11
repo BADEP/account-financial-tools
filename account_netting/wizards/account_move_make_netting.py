@@ -158,14 +158,13 @@ class AccountMoveMakeNetting(models.TransientModel):
                 available_amount -= account_group["balance"]
                 if ccur.compare_amounts(available_amount, 0) <= 0:
                     break
-        vals = {
+        return {
             "date": self.date,
             "ref": self.ref,
             "journal_id": self.journal_id.id,
             "company_id": self.company_id.id,
             "line_ids": move_lines,
         }
-        return vals
 
     def button_compensate(self):
         self.ensure_one()

@@ -3,9 +3,7 @@
 # Copyright 2022 Tecnativa - Víctor Martínez
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from datetime import datetime
-
-from odoo import Command
+from odoo import Command, fields
 from odoo.exceptions import UserError
 from odoo.tests import common, tagged
 
@@ -117,9 +115,8 @@ class TestAccountNetting(common.TransactionCase):
             ],
         }
         if move_type in ("in_invoice", "in_refund"):
-            vals["invoice_date"] = datetime.now()
-        move = self.env["account.move"].create(vals)
-        return move
+            vals["invoice_date"] = fields.Date.today()
+        return self.env["account.move"].create(vals)
 
     def test_compensation(self):
         # Test raise if 1 account.move.line selected
