@@ -250,6 +250,6 @@ class AccountJournal(models.Model):
                         )
                     )
                 return seq_vals
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - best effort, fallback to no values
             _logger.warning("%s %s", msg_err, e)
         return {}
