@@ -140,10 +140,7 @@ class AccountMove(models.Model):
             ),
             limit=1,
         )
-        if after_inv:
-            time = "before"
-        else:
-            time = "after"
+        time = "before" if after_inv else "after"
         msg = self.env._(
             "Chronology conflict: Invoice %(name)s cannot be %(time)s"
             " invoice %(inv_name)s."
