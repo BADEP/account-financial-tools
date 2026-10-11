@@ -173,8 +173,9 @@ class TestAssetManagement(AccountTestInvoicingCommon):
 
             # Validate that the profile account is used
             expense_line = move.line_ids.filtered(
-                lambda line: line.account_id
-                == self.car5y.account_expense_depreciation_id
+                lambda line: (
+                    line.account_id == self.car5y.account_expense_depreciation_id
+                )
             )
             self.assertTrue(expense_line)
 
