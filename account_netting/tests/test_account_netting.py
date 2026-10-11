@@ -5,10 +5,9 @@
 
 from datetime import datetime
 
-import odoo.tests.common as common
 from odoo import Command
 from odoo.exceptions import UserError
-from odoo.tests import tagged
+from odoo.tests import common, tagged
 
 
 @tagged("post_install", "-at_install")
