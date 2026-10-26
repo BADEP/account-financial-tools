@@ -203,9 +203,10 @@ class AccountLoan(models.Model):
         default=True, help="Invoices will be posted automatically"
     )
 
-    _sql_constraints = [
-        ("name_uniq", "unique(name, company_id)", "Loan name must be unique"),
-    ]
+    _name_uniq = models.Constraint(
+        "unique(name, company_id)",
+        "Loan name must be unique",
+    )
 
     @api.onchange("rate")
     def _onchange_rate_warning(self):

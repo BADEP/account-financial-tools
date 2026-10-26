@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!-- Copyright 2011 Alexis de Lattre <alexis.delattre@akretion.com>
      Copyright 2016 Antonio Espinosa <antonio.espinosa@tecnativa.com>
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
@@ -31,9 +31,9 @@
         <field name="target">new</field>
     </record>
     <menuitem
+        id="account_loan_generate_wizard_menu"
         name="Generate Loan Entries"
         action="account_loan_generate_wizard_action"
-        id="account_loan_generate_wizard_menu"
         parent="account_loan.loan_menu"
         sequence="111"
         groups="account.group_account_manager"

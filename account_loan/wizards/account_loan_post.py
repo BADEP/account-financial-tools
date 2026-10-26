@@ -52,7 +52,7 @@ class AccountLoanPost(models.TransientModel):
                 "name": self.loan_id.name,
                 "partner_id": partner.id,
                 "credit": -amount if amount < 0 else 0,
-                "debit": amount if amount > 0 else 0,
+                "debit": max(0, amount),
             }
         )
         diff_amount = abs(line.pending_principal_amount) - abs(

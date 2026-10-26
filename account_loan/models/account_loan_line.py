@@ -221,7 +221,7 @@ class AccountLoanLine(models.Model):
         if self.move_ids:
             raise UserError(
                 self.env._(
-                    "Amount cannot be recomputed if moves or invoices exists " "already"
+                    "Amount cannot be recomputed if moves or invoices exists already"
                 )
             )
         if (
@@ -308,7 +308,7 @@ class AccountLoanLine(models.Model):
             {
                 "account_id": (account and account.id) or partner_account.id,
                 "partner_id": partner.id,
-                "credit": self.payment_amount if self.payment_amount > 0 else 0,
+                "credit": max(0, self.payment_amount),
                 "debit": -self.payment_amount if self.payment_amount < 0 else 0,
             }
         )
@@ -318,7 +318,7 @@ class AccountLoanLine(models.Model):
                 {
                     "account_id": self.loan_id.interest_expenses_account_id.id,
                     "credit": -amount if amount < 0 else 0,
-                    "debit": amount if amount > 0 else 0,
+                    "debit": max(0, amount),
                 }
             )
         diff_amount = self.payment_amount - self.interests_amount
@@ -326,7 +326,7 @@ class AccountLoanLine(models.Model):
             {
                 "account_id": self.loan_id.short_term_loan_account_id.id,
                 "credit": -diff_amount if diff_amount < 0 else 0,
-                "debit": diff_amount if diff_amount > 0 else 0,
+                "debit": max(0, diff_amount),
             }
         )
         if self.long_term_loan_account_id and self.long_term_principal_amount:
@@ -334,7 +334,7 @@ class AccountLoanLine(models.Model):
             vals.append(
                 {
                     "account_id": self.loan_id.short_term_loan_account_id.id,
-                    "credit": amount if amount > 0 else 0,
+                    "credit": max(0, amount),
                     "debit": -amount if amount < 0 else 0,
                 }
             )
@@ -342,7 +342,7 @@ class AccountLoanLine(models.Model):
                 {
                     "account_id": self.long_term_loan_account_id.id,
                     "credit": -amount if amount < 0 else 0,
-                    "debit": amount if amount > 0 else 0,
+                    "debit": max(0, amount),
                 }
             )
         return vals
