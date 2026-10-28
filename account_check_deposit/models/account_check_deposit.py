@@ -13,7 +13,7 @@ from odoo.exceptions import UserError, ValidationError
 class AccountCheckDeposit(models.Model):
     _name = "account.check.deposit"
     _description = "Check Deposit"
-    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _inherit = ["mail.thread", "mail.activity.mixin"]  # noqa: RUF012
     _order = "deposit_date desc"
     _check_company_auto = True
 
@@ -224,14 +224,15 @@ class AccountCheckDeposit(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        deposits = self
         for vals in vals_list:
             if "company_id" in vals:
-                self = self.with_company(vals["company_id"])
-            if vals.get("name", self.env._("New")) == self.env._("New"):
-                vals["name"] = self.env["ir.sequence"].next_by_code(
+                deposits = deposits.with_company(vals["company_id"])
+            if vals.get("name", deposits.env._("New")) == deposits.env._("New"):
+                vals["name"] = deposits.env["ir.sequence"].next_by_code(
                     "account.check.deposit", vals.get("deposit_date")
-                ) or self.env._("New")
-        return super().create(vals_list)
+                ) or deposits.env._("New")
+        return super(AccountCheckDeposit, deposits).create(vals_list)
 
     def _prepare_move_vals(self):
         self.ensure_one()
@@ -267,7 +268,7 @@ class AccountCheckDeposit(models.Model):
                 )
             )
 
-        vals = {
+        return {
             "journal_id": self.journal_id.id,
             "date": self.deposit_date,
             "ref": self.env._("Check Deposit %s", self.name),
@@ -293,7 +294,6 @@ class AccountCheckDeposit(models.Model):
                 ),
             ],
         }
-        return vals
 
     def validate_deposit(self):
         am_obj = self.env["account.move"]
