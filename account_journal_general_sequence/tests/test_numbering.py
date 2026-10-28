@@ -75,8 +75,8 @@ class RenumberCase(AccountTestInvoicingCommon):
         self.assertLess(new_invoice.entry_number, old_invoice.entry_number)
         # Fix entry number order with wizard; default values are OK
         wiz_f = Form(
-            self.env["account.move.renumber.wizard"].with_company(
-                self.company_data["company"]
+            self.env["account.move.renumber.wizard"].with_context(
+                allowed_company_ids=self.company_data["company"].ids
             )
         )
         self.assertEqual(len(wiz_f.available_sequence_ids), 1)
