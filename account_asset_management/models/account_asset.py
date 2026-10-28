@@ -4,7 +4,6 @@
 
 import calendar
 import logging
-import typing
 from datetime import date
 from functools import reduce
 from sys import exc_info
@@ -26,7 +25,7 @@ class DummyFy:
 
 class AccountAsset(models.Model):
     _name = "account.asset"
-    _inherit: typing.ClassVar[list[str]] = [
+    _inherit = [  # noqa: RUF012
         "mail.thread",
         "mail.activity.mixin",
         "analytic.mixin",
