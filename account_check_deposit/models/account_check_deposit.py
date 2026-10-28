@@ -6,8 +6,6 @@
 # Copyright 2018-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import typing
-
 from odoo import Command, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
@@ -15,7 +13,7 @@ from odoo.exceptions import UserError, ValidationError
 class AccountCheckDeposit(models.Model):
     _name = "account.check.deposit"
     _description = "Check Deposit"
-    _inherit: typing.ClassVar[list[str]] = ["mail.thread", "mail.activity.mixin"]
+    _inherit = ["mail.thread", "mail.activity.mixin"]  # noqa: RUF012
     _order = "deposit_date desc"
     _check_company_auto = True
 
