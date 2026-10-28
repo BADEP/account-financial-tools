@@ -301,8 +301,9 @@ class AccountCheckDeposit(models.Model):
             move = am_obj.create(deposit._prepare_move_vals())
             move.action_post()
             lines_to_rec = deposit.check_payment_ids + move.line_ids.filtered(
-                lambda x, deposit=deposit: x.account_id
-                == deposit.in_hand_check_account_id
+                lambda x, deposit=deposit: (
+                    x.account_id == deposit.in_hand_check_account_id
+                )
             )
             lines_to_rec.reconcile()
             deposit.write({"state": "done", "move_id": move.id})
