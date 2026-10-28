@@ -13,14 +13,13 @@ class AccountAssetGroup(models.Model):
     _parent_store = True
     _check_company_auto = True
     _check_company_domain = models.check_company_domain_parent_of
-    _rec_names_search = ["code", "name"]
+    _rec_names_search = ("code", "name")
 
     name = fields.Char(size=64, required=True, index=True)
     code = fields.Char(index=True)
     parent_path = fields.Char(index=True)
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Company",
         required=True,
         default=lambda self: self._default_company_id(),
     )
@@ -56,8 +55,5 @@ class AccountAssetGroup(models.Model):
                     short_name = full_name[:16] + "..."
                 else:
                     short_name = full_name
-            if list_view:
-                name = short_name
-            else:
-                name = full_name
+            name = short_name if list_view else full_name
             rec.display_name = name

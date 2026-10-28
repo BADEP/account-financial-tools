@@ -16,7 +16,6 @@ class AccountAssetLine(models.Model):
     name = fields.Char(string="Depreciation Name", size=64, readonly=True)
     asset_id = fields.Many2one(
         comodel_name="account.asset",
-        string="Asset",
         required=True,
         ondelete="cascade",
         check_company=True,
@@ -232,12 +231,11 @@ class AccountAssetLine(models.Model):
 
     def _setup_move_data(self, depreciation_date):
         asset = self.asset_id
-        move_data = {
+        return {
             "date": depreciation_date,
             "ref": f"{asset.name} - {self.name}",
             "journal_id": asset.profile_id.journal_id.id,
         }
-        return move_data
 
     def _setup_move_line_data(self, depreciation_date, account, ml_type, move):
         """Prepare data to be propagated to account.move.line"""
@@ -253,7 +251,7 @@ class AccountAssetLine(models.Model):
             debit = amount_comp > 0 and amount or 0.0
             credit = amount_comp < 0 and -amount or 0.0
             analytic_distribution = asset.analytic_distribution
-        move_line_data = {
+        return {
             "name": asset.name,
             "ref": self.name,
             "move_id": move.id,
@@ -266,7 +264,6 @@ class AccountAssetLine(models.Model):
             "date": depreciation_date,
             "asset_id": asset.id,
         }
-        return move_line_data
 
     def create_move(self):
         created_move_ids = []
@@ -336,11 +333,10 @@ class AccountAssetLine(models.Model):
                     "type": "ir.actions.act_window",
                     "context": context,
                 }
-            else:
-                move = line.move_id
-                move.button_draft()
-                move.with_context(force_delete=True, unlink_from_asset=True).unlink()
-                line.with_context(
-                    unlink_from_asset=True
-                ).update_asset_line_after_unlink_move()
+            move = line.move_id
+            move.button_draft()
+            move.with_context(force_delete=True, unlink_from_asset=True).unlink()
+            line.with_context(
+                unlink_from_asset=True
+            ).update_asset_line_after_unlink_move()
         return True

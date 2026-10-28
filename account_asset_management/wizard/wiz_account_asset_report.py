@@ -13,7 +13,6 @@ class WizAccountAssetReport(models.TransientModel):
 
     asset_group_id = fields.Many2one(
         comodel_name="account.asset.group",
-        string="Asset Group",
         default=lambda self: self._default_asset_group_id(),
     )
     date_from = fields.Date(string="Start Date", required=True)
@@ -21,7 +20,6 @@ class WizAccountAssetReport(models.TransientModel):
     draft = fields.Boolean(string="Include draft assets")
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Company",
         required=True,
         default=lambda self: self._default_company_id(),
     )
@@ -65,11 +63,10 @@ class WizAccountAssetReport(models.TransientModel):
             report_file = f"{prefix}_asset_report"
         else:
             report_file = "asset_report"
-        report = {
+        return {
             "type": "ir.actions.report",
             "report_type": "xlsx",
             "report_name": report_name,
             "context": dict(self.env.context, report_file=report_file),
             "data": {"dynamic_report": True},
         }
-        return report

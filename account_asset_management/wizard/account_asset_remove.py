@@ -17,7 +17,6 @@ class AccountAssetRemove(models.TransientModel):
 
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Company",
         readonly=True,
         required=True,
         default=lambda self: self._default_company_id(),
@@ -147,8 +146,7 @@ class AccountAssetRemove(models.TransientModel):
         country = asset and asset.company_id.country_id.code or False
         if country in self._residual_value_regime_countries():
             return "residual_value"
-        else:
-            return "gain_loss_on_sale"
+        return "gain_loss_on_sale"
 
     def _residual_value_regime_countries(self):
         return ["FR"]
@@ -189,10 +187,7 @@ class AccountAssetRemove(models.TransientModel):
 
         line_name = asset._get_depreciation_entry_name(len(dlines) + 1)
         journal_id = asset.profile_id.journal_id.id
-        if not self.force_date:
-            date_remove = self.date_remove
-        else:
-            date_remove = self.force_date
+        date_remove = self.date_remove if not self.force_date else self.force_date
 
         # create move
         move_vals = {
@@ -247,8 +242,7 @@ class AccountAssetRemove(models.TransientModel):
                     and not line.move_check
                 )
             )
-            dlines = dlines.sorted(key=lambda line: line.line_date)
-            return dlines
+            return dlines.sorted(key=lambda line: line.line_date)
 
         dlines = _dlines(asset)
         if not dlines:

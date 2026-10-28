@@ -25,12 +25,16 @@ class DummyFy:
 
 class AccountAsset(models.Model):
     _name = "account.asset"
-    _inherit = ["mail.thread", "mail.activity.mixin", "analytic.mixin"]
+    _inherit = [  # noqa: RUF012
+        "mail.thread",
+        "mail.activity.mixin",
+        "analytic.mixin",
+    ]
     _description = "Asset"
     _order = "date_start desc, code, name"
     _check_company_auto = True
     _check_company_domain = models.check_company_domain_parent_of
-    _rec_names_search = ["code", "name"]
+    _rec_names_search = ("code", "name")
 
     account_move_line_ids = fields.One2many(
         comodel_name="account.move.line",
@@ -131,7 +135,6 @@ class AccountAsset(models.Model):
     active = fields.Boolean(default=True)
     partner_id = fields.Many2one(
         comodel_name="res.partner",
-        string="Partner",
     )
     method = fields.Selection(
         selection=lambda self: self.env["account.asset.profile"]._selection_method(),
@@ -235,7 +238,6 @@ class AccountAsset(models.Model):
     )
     company_id = fields.Many2one(
         comodel_name="res.company",
-        string="Company",
         required=True,
         readonly=True,
         default=lambda self: self._default_company_id(),
@@ -490,7 +492,7 @@ class AccountAsset(models.Model):
         for asset in self:
             name = asset.name
             if asset.code:
-                name = " - ".join([asset.code, name])
+                name = f"{asset.code} - {name}"
             asset.display_name = name
 
     def validate(self):
@@ -638,10 +640,7 @@ class AccountAsset(models.Model):
                 ("init_entry", "=", True),
             ]
             posted_lines = line_obj.search(domain, order="line_date desc")
-            if posted_lines:
-                last_line = posted_lines[0]
-            else:
-                last_line = line_obj
+            last_line = posted_lines[0] if posted_lines else line_obj
             domain = [
                 ("asset_id", "=", asset.id),
                 ("type", "=", "depreciate"),
@@ -761,9 +760,9 @@ class AccountAsset(models.Model):
         )
         if option == "days":
             return days
-        elif option == "months":
+        if option == "months":
             return months
-        elif option == "years":
+        if option == "years":
             year = fy_date_start.year
             cnt = fy_date_stop.year - fy_date_start.year + 1
             for i in range(cnt):
@@ -781,6 +780,7 @@ class AccountAsset(models.Model):
                     factor += 1.0
                 year += 1
             return factor
+        return None
 
     def _get_fy_duration_factor(self, entry, firstyear):
         """
@@ -813,11 +813,7 @@ class AccountAsset(models.Model):
         In case of 'Linear': the first month is counted as a full month
         if the fiscal year starts in the middle of a month.
         """
-        if self.prorata:
-            depreciation_start_date = self.date_start
-        else:
-            depreciation_start_date = fy.date_from
-        return depreciation_start_date
+        return self.date_start if self.prorata else fy.date_from
 
     def _get_depreciation_stop_date(self, depreciation_start_date):
         if self.method_time == "year" and not self.method_end:
@@ -830,7 +826,7 @@ class AccountAsset(models.Model):
                     months=self.method_number, days=-1
                 )
             elif self.method_period == "quarter":
-                m = [x for x in [3, 6, 9, 12] if x >= depreciation_start_date.month][0]
+                m = next(x for x in [3, 6, 9, 12] if x >= depreciation_start_date.month)
                 first_line_date = depreciation_start_date + relativedelta(
                     month=m, day=31
                 )
@@ -896,24 +892,20 @@ class AccountAsset(models.Model):
         if self.method == "linear-limit":
             if (residual_amount - year_amount_linear) < self.salvage_value:
                 return residual_amount - self.salvage_value
-            else:
-                return year_amount_linear
+            return year_amount_linear
         year_amount_degressive = residual_amount * self.method_progress_factor
         if self.method == "degressive":
             return year_amount_degressive
         if self.method == "degr-linear":
             if year_amount_linear > year_amount_degressive:
                 return min(year_amount_linear, residual_amount)
-            else:
-                return min(year_amount_degressive, residual_amount)
+            return min(year_amount_degressive, residual_amount)
         if self.method == "degr-limit":
             if (residual_amount - year_amount_degressive) < self.salvage_value:
                 return residual_amount - self.salvage_value
-            else:
-                return year_amount_degressive
-        else:
-            msg = self.env._("Illegal value %s in asset.method.")
-            raise UserError(msg % self.method)
+            return year_amount_degressive
+        msg = self.env._("Illegal value %s in asset.method.")
+        raise UserError(msg % self.method)
 
     def _compute_line_dates(self, table, start_date, stop_date):
         """
@@ -930,7 +922,7 @@ class AccountAsset(models.Model):
         if self.method_period == "month":
             line_date = start_date + relativedelta(day=31)
         if self.method_period == "quarter":
-            m = [x for x in [3, 6, 9, 12] if x >= start_date.month][0]
+            m = next(x for x in [3, 6, 9, 12] if x >= start_date.month)
             line_date = start_date + relativedelta(month=m, day=31)
         elif self.method_period == "year":
             line_date = table[0]["date_stop"]
@@ -1020,8 +1012,7 @@ class AccountAsset(models.Model):
                     break
         if table:
             i_max = i
-        table = table[: i_max + 1]
-        return table
+        return table[: i_max + 1]
 
     def _compute_depreciation_table_lines(
         self, table, depreciation_start_date, depreciation_stop_date, line_dates
@@ -1106,15 +1097,16 @@ class AccountAsset(models.Model):
             # was compensated in the first FY depreciation line.
             # The code has now been simplified with compensation
             # always in last FT depreciation line.
-            if self.method_time == "year" and not entry.get("day_amount"):
-                if not currency.is_zero(fy_amount_check - fy_amount):
-                    diff = fy_amount_check - fy_amount
-                    amount = amount - diff
-                    remaining_value += diff
-                    lines[-1].update(
-                        {"amount": amount, "remaining_value": remaining_value}
-                    )
-                    depreciated_value -= diff
+            if (
+                self.method_time == "year"
+                and not entry.get("day_amount")
+                and not currency.is_zero(fy_amount_check - fy_amount)
+            ):
+                diff = fy_amount_check - fy_amount
+                amount = amount - diff
+                remaining_value += diff
+                lines[-1].update({"amount": amount, "remaining_value": remaining_value})
+                depreciated_value -= diff
 
             if not lines:
                 table.pop(i)
@@ -1211,7 +1203,7 @@ class AccountAsset(models.Model):
             try:
                 with self.env.cr.savepoint():
                     result += depreciation.create_move()
-            except Exception:
+            except Exception:  # noqa: BLE001 - collect per-asset errors, continue batch
                 e = exc_info()[1]
                 tb = "".join(format_exception(*exc_info()))
                 asset_ref = depreciation.asset_id.name
